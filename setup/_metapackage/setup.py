@@ -9,6 +9,7 @@ setuptools.setup(
     version=version,
     install_requires=[
         'odoo11-addon-bi_sql_editor',
+        'odoo11-addon-bi_sql_editor_aggregate',
         'odoo11-addon-bi_view_editor',
         'odoo11-addon-report_context',
         'odoo11-addon-report_csv',
@@ -16,6 +17,7 @@ setuptools.setup(
         'odoo11-addon-report_qr',
         'odoo11-addon-report_qweb_parameter',
         'odoo11-addon-report_qweb_pdf_watermark',
+        'odoo11-addon-report_qweb_txt',
         'odoo11-addon-report_wkhtmltopdf_param',
         'odoo11-addon-report_xlsx',
         'odoo11-addon-report_xlsx_helper',
