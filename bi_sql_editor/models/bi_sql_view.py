@@ -555,9 +555,15 @@ class BiSQLView(models.Model):
     @api.multi
     def _prepare_request_for_execution(self):
         self.ensure_one()
+        columns = self.bi_sql_view_field_ids.mapped("name")
+        as_id = (
+            "my_query.x_id AS id"
+            if "x_id" in columns
+            else "CAST(row_number() OVER () as integer) AS id"
+        )
         query = """
             SELECT
-                CAST(row_number() OVER () as integer) AS id,
+                %s,
                 CAST(Null as timestamp without time zone) as create_date,
                 CAST(Null as integer) as create_uid,
                 CAST(Null as timestamp without time zone) as write_date,
@@ -565,7 +571,7 @@ class BiSQLView(models.Model):
                 my_query.*
             FROM
                 (%s) as my_query
-        """ % self.query
+        """ % (as_id, self.query)
         return "CREATE %s VIEW %s AS (%s);" % (
             self.materialized_text, self.view_name, query)
 
