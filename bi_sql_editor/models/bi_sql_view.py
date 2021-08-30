@@ -128,7 +128,7 @@ class BiSQLView(models.Model):
         " Take care to use field name prefixed by 'x_'."
         " A global 'ir.rule' will be created."
         " A typical Multi Company rule is for exemple \n"
-        " ['|', ('x_company_id','child_of', [user.company_id.id]),"
+        " ['|', ('x_company_id','child_of', [company.id]),"
         "('x_company_id','=',False)].",
         states={"draft": [("readonly", False)], "sql_valid": [("readonly", False)]},
     )
