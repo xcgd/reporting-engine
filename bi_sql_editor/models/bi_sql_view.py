@@ -664,7 +664,24 @@ class BiSQLView(models.Model):
             if sql_view.action_id:
                 # Alter name of the action, to display last refresh
                 # datetime of the materialized view
-                sql_view.action_id.name = sql_view._prepare_action_name()
+                action_name = sql_view._prepare_action_name()
+                trads = self.env["ir.translation"].search(
+                    [
+                        ("type", "=", "model"),
+                        ("name", "=", "ir.actions.act_window,name"),
+                        ("res_id", "=", sql_view.action_id.id),
+                    ]
+                )
+                sql_view.action_id.name = action_name
+                for trad in trads:
+                    trad.write(
+                        {
+                            "src": action_name,
+                            "value": sql_view.with_context(
+                                lang=trad.lang
+                            )._prepare_action_name(),
+                        }
+                    )
 
     def _refresh_size(self):
         for sql_view in self:
