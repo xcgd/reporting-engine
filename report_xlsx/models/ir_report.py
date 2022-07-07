@@ -47,7 +47,7 @@ class ReportAction(models.Model):
 
         attachment_setting = self.attachment
         if not attachment_setting:
-            return True
+            return
 
         if len(docids) > 1:
             _logger.warning(
@@ -70,7 +70,7 @@ class ReportAction(models.Model):
             "res_id": record.id,
         }
         try:
-            self.env["ir.attachment"].create(attachment_vals)
+            attachment = self.env["ir.attachment"].create(attachment_vals)
         except AccessError:
             _logger.info(
                 "Cannot save XLSX report %r as attachment",
@@ -82,4 +82,4 @@ class ReportAction(models.Model):
                 attachment_vals["name"],
             )
 
-        return True
+        return attachment, record
