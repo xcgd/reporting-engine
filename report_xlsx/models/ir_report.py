@@ -5,26 +5,26 @@ import base64
 import logging
 import time
 
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo import _, api, fields, models
+from odoo.exceptions import AccessError, UserError
 from odoo.tools.safe_eval import safe_eval
 
 _logger = logging.getLogger(__name__)
 
 
 class ReportAction(models.Model):
-    _inherit = 'ir.actions.report'
+    _inherit = "ir.actions.report"
 
     report_type = fields.Selection(selection_add=[("xlsx", "xlsx")])
 
     @api.model
     def render_xlsx(self, docids, data):
-        report_model_name = 'report.%s' % self.report_name
+        report_model_name = "report.%s" % self.report_name
         report_model = self.env.get(report_model_name)
         if report_model is None:
-            raise UserError(_('%s model was not found' % report_model_name))
+            raise UserError(_("%s model was not found" % report_model_name))
         ret = report_model.with_context(
-            active_model=self.model,
+            active_model=self.model
         ).create_xlsx_report(docids, data)
         if ret and isinstance(ret, (tuple, list)):  # data, "xlsx"
             self.save_xlsx_report_attachment(docids, ret[0])
@@ -35,11 +35,13 @@ class ReportAction(models.Model):
         res = super(ReportAction, self)._get_report_from_name(report_name)
         if res:
             return res
-        report_obj = self.env['ir.actions.report']
-        qwebtypes = ['xlsx']
-        conditions = [('report_type', 'in', qwebtypes),
-                      ('report_name', '=', report_name)]
-        context = self.env['res.users'].context_get()
+        report_obj = self.env["ir.actions.report"]
+        qwebtypes = ["xlsx"]
+        conditions = [
+            ("report_type", "in", qwebtypes),
+            ("report_name", "=", report_name),
+        ]
+        context = self.env["res.users"].context_get()
         return report_obj.with_context(context).search(conditions, limit=1)
 
     def save_xlsx_report_attachment(self, docids, report_contents):
