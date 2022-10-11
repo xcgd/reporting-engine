@@ -72,7 +72,9 @@ class ReportAction(models.Model):
             "res_id": record.id,
         }
         try:
-            attachment = self.env["ir.attachment"].create(attachment_vals)
+            attachment = (
+                self.env["ir.attachment"].sudo().create(attachment_vals)
+            )
         except AccessError:
             _logger.info(
                 "Cannot save XLSX report %r as attachment",
